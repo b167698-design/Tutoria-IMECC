@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Funções Polinomiais — Teoria + Quiz (IMECC)</title>
+
+<!-- MathJax (ou use o filtro do Moodle) -->
+<script>
+  window.MathJax = {
+    tex: {inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true, packages: {'[+]':['ams']}},
+    svg: {fontCache: 'global'}
+  };
+</script>
+<script async id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+<style>
+/* ================= Paleta clean IMECC (sem amarelo) ================= */
+:root{
+  --ink:#101827;          /* texto principal */
+  --muted:#667085;        /* texto secundário */
+  --paper:#ffffff;        /* cartões */
+  --bg:#f7f8fb;           /* fundo da página */
+  --blue:#0b2a5c;         /* primário */
+  --gold:#2f6ad8;         /* AGORA é azul acento */
+  --line:#e6e9f0;         /* linhas suaves */
+  --ok:#10b981; --err:#ef4444;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,Arial,sans-serif;line-height:1.65}
+a{color:var(--gold)}
+.wrap{max-width:1100px;margin:auto;padding:24px}
+h1{margin:0 0 8px;color:var(--blue);font-weight:800;letter-spacing:.2px;font-size:2.15rem}
+h2{color:var(--blue);margin:1.4rem 0 .6rem}
+h3{color:var(--gold);margin:1rem 0 .3rem}
+.lead{color:var(--muted)}
+
+/* ================= Abas ================= */
+.tabs{display:flex;gap:12px;margin:18px 0 12px}
+.tab-btn{
+  flex:1;min-width:180px;padding:12px 18px;border-radius:12px;
+  border:1px solid var(--line);background:#fff;font-weight:700;cursor:pointer;
+  transition:.25s;box-shadow:0 2px 6px rgba(0,0,0,.06); color:var(--blue)
+}
+.tab-btn:hover{background:#f3f4f6}
+.tab-btn.active{
+  background:linear-gradient(135deg,var(--blue),var(--gold));color:#fff;border-color:transparent;
+  box-shadow:0 6px 16px rgba(11,42,92,.25);transform:translateY(-1px)
+}
+
+/* ================= Cartões e blocos ================= */
+.card{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:0 10px 26px rgba(0,0,0,.08)}
+.section{margin:16px 0 28px}
+.block{
+  border-left:8px solid var(--blue);padding:14px 16px;border-radius:12px;background:#f1f4fb;margin:10px 0
+}
+.block h3{margin:.1rem 0 .5rem}
+.block.alt{border-left-color:var(--gold);background:#eef3ff} /* azul claro (sem amarelo) */
+.example{
+  border:1px dashed #c7d2fe;background:#fbfcff;border-radius:12px;padding:12px 14px;margin:10px 0
+}
+.badge{display:inline-block;background:var(--blue);color:#fff;padding:.08rem .55rem;border-radius:999px;font-size:.78rem;letter-spacing:.02em}
+.video{position:relative;width:100%;aspect-ratio:16/9;min-height:420px;border:0;border-radius:14px;overflow:hidden;box-shadow:0 6px 18px rgba(0,0,0,.15)}
+.video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.hr{height:10px}
+.hr:after{content:"";display:block;height:10px;border-bottom:2px dashed var(--line);margin:18px 0}
+
+/* ================= TOC + “brisa” ================= */
+.toc{background:#edf3ff;border:1px solid #cfe0ff;padding:1rem;border-radius:12px}
+.toc ol{list-style: decimal; padding-left: 1.2rem}
+.toc li{margin:.18rem 0; padding:.06rem 0; border-radius:8px;}
+.toc a{
+  position: relative; display: inline-block; padding: .06rem .1rem;
+  color: var(--blue); text-decoration: none;
+  transition: transform .25s ease, color .25s ease, text-shadow .25s ease;
+}
+.toc a::after{
+  content:""; position:absolute; left:0; bottom:-2px;
+  width:0; height:2px; background: linear-gradient(90deg, var(--blue), var(--gold));
+  transition: width .30s ease; border-radius:2px;
+}
+.toc li:hover a{ transform: translateX(4px); text-shadow:0 0 1px rgba(15,23,42,.15);}
+.toc li:hover a::after{ width:100% }
+.toc li:hover{ background: rgba(47,106,216,.06) }
+@media (prefers-reduced-motion: reduce){ .toc a, .toc a::after, .toc li{ transition: none !important; } }
+
+/* ================= Quiz ================= */
+.q{padding:14px;border:1px solid var(--line);border-radius:12px;margin-bottom:12px;background:#fff}
+.opt{display:flex;gap:10px;margin:6px 0;align-items:flex-start}
+.opt .letter{opacity:.7;min-width:28px;text-align:right}
+.controls button{cursor:pointer;padding:10px 16px;border:0;border-radius:10px;color:#fff;font-weight:700;box-shadow:0 4px 10px rgba(0,0,0,.2)}
+#btnPrev{background:linear-gradient(45deg,#6b7280,#a3a3a3)}
+#btnNext{background:linear-gradient(45deg,#4b5563,#9ca3af)}
+#btnGrade{background:linear-gradient(45deg,#10b981,#34d399)}
+#btnKey{background:linear-gradient(45deg,#555,#999)}
+#btnReset{background:linear-gradient(45deg,#ef4444,#f97316)}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Funções Polinomiais — Teoria + Quiz</h1>
+  <p class="lead">Material completo e acessível: teoria detalhada, exemplos resolvidos e vídeo em cada bloco — com paleta IMECC/UNICAMP.</p>
+
+  <div class="tabs">
+    <button class="tab-btn active" id="btnTeoria">📘 Teoria</button>
+    <button class="tab-btn" id="btnQuiz">🧪 Quiz</button>
+  </div>
+
+  <!-- ======================= TEORIA ======================= -->
+  <section id="paneTeoria" class="card">
+    <div class="toc">
+      <strong>Conteúdo</strong>
+      <ol>
+        <li><a href="#b1">Definição e notação</a></li>
+        <li><a href="#b2">Valor numérico e raízes</a></li>
+        <li><a href="#b3">Igualdade e polinômio nulo</a></li>
+        <li><a href="#b4">Operações: soma, produto e propriedades</a></li>
+        <li><a href="#b5">Grau e coeficiente líder</a></li>
+        <li><a href="#b6">Divisão: método da chave e Brito-Ruffini</a></li>
+        <li><a href="#b7">Teorema de D’Alembert (raiz racional) e fatoração</a></li>
+        <li><a href="#b8">Equações polinomiais: resolução por etapas</a></li>
+      </ol>
+    </div>
+
+    <!-- BLOCO 1 -->
+    <div id="b1" class="section">
+      <div class="block">
+        <h3>I. Definição e notação</h3>
+        <p>Chamamos de <em>função polinomial</em> toda função $f:\mathbb{R}\to\mathbb{R}$ (ou $\mathbb{C}\to\mathbb{C}$) que pode ser escrita na forma
+        $$f(x)=a_nx^n+a_{n-1}x^{n-1}+\cdots+a_1x+a_0,$$
+        onde $n\in\mathbb{N}$, $a_n\neq 0$ e $a_0,\ldots,a_n\in\mathbb{R}$. O número $n$ é o <strong>grau</strong> e $a_n$ é o <strong>coeficiente líder</strong>. Cada parcela $a_kx^k$ é um <strong>termo</strong>; quando há apenas um termo dizemos que é um <em>monômio</em>. Um polinômio pode ser avaliado em qualquer $x\in\mathbb{R}$ por simples substituição, pois só aparecem somas e produtos. Notação útil: $P$ ou $Q$ para polinômios; $P\equiv 0$ significa o polinômio nulo. Trabalhar com polinômios treina manipulação algébrica e prepara para temas como séries, interpolação e soluções aproximadas de equações.</p>
+      </div>
+      <div class="example">
+        <span class="badge">Exemplo comentado</span>
+        <p>Considere $f(x)=3x^4-2x^2+5$, $g(x)=-7x+1$ e $h(x)=x^3-4x$. Em $f$, o grau é $4$, os coeficientes não nulos são $a_4=3,\ a_2=-2,\ a_0=5$ e $f(0)=5$ (termo independente). Em $g$ o grau é $1$ (função afim). Já $h$ é ímpar porque só possui potências ímpares e $h(0)=0$.</p>
+      </div>
+      <div class="video"><iframe src="https://drive.google.com/file/d/1wzXN4_cexnY8ZEx6040KK89UU9n2yYVn/preview" title="Vídeo — Introdução" allowfullscreen></iframe></div>
+      <div class="hr"></div>
+    </div>
+
+    <!-- BLOCO 2 -->
+    <div id="b2" class="section">
+      <div class="block alt">
+        <h3>II. Valor numérico e raízes</h3>
+        <p>O <strong>valor numérico</strong> de $P$ em $x=a$ é $P(a)$, obtido substituindo $x$ por $a$. Dizemos que $a$ é uma <strong>raiz</strong> (ou zero) quando $P(a)=0$. As raízes de um polinômio real informam onde o gráfico intercepta o eixo $x$. Se $a$ é raiz, então $(x-a)$ é fator de $P(x)$: $P(x)=(x-a)Q(x)$ para algum polinômio $Q$. A recíproca também é verdadeira. Uma raiz pode ter <strong>multiplicidade</strong> $m\ge1$ quando $(x-a)^m$ divide $P$ e $(x-a)^{m+1}$ não divide. Graficamente, se $m$ é ímpar o gráfico “atravessa” o eixo; se $m$ é par ele “toca e volta”.</p>
+      </div>
+      <div class="example">
+        <span class="badge">Exemplo passo a passo</span>
+        <p>Se $P(x)=x^3-4x$, então $P(0)=0$, $P(1)=-3$ e $P(-1)=3$. Fatorando: $P(x)=x(x-2)(x+2)$. As raízes são $-2,0,2$, todas simples ($m=1$), logo o gráfico cruza o eixo $x$ em cada uma.</p>
+      </div>
+      <div class="video"><iframe src="https://www.youtube.com/embed/TAZkHYyio-M" title="Vídeo — Raízes e multiplicidade" allowfullscreen></iframe></div>
+      <div class="hr"></div>
+    </div>
+
+    <!-- BLOCO 3 -->
+    <div id="b3" class="section">
+      <div class="block">
+        <h3>III. Igualdade e polinômio nulo</h3>
+        <p>Dois polinômios $P$ e $Q$ são <strong>iguais</strong> quando os coeficientes de potências iguais coincidem. Em símbolos:
+        $$P(x)=\sum_{k=0}^{n}a_kx^k,\quad Q(x)=\sum_{k=0}^{n}b_kx^k\quad\Rightarrow\quad P\equiv Q \iff a_k=b_k\ \forall k.$$
+        O <strong>polinômio nulo</strong> é aquele cujos coeficientes são todos zero e satisfaz $P+0\equiv P$. Em problemas práticos, para verificar igualdade costuma-se expandir, agrupar termos semelhantes e comparar coeficientes. Esse critério justifica técnicas de identificação de parâmetros e demonstrações por comparação termo a termo.</p>
+      </div>
+      <div class="example">
+        <span class="badge">Exemplo</span>
+        <p>Se $P(x)=2x^2+3x+1$ e $Q(x)=x(2x+3)+1$, então $Q$ expande para $2x^2+3x+1$ e portanto $P\equiv Q$.</p>
+      </div>
+      <div class="video"><iframe src="https://www.youtube.com/embed/TAZkHYyio-M" title="Vídeo — Igualdade de polinômios" allowfullscreen></iframe></div>
+      <div class="hr"></div>
+    </div>
+
+    <!-- BLOCO 4 -->
+    <div id="b4" class="section">
+      <div class="block alt">
+        <h3>IV. Operações: soma, produto e propriedades</h3>
+        <p>A soma de polinômios soma coeficientes de mesmas potências. O produto segue a distributiva (“cada termo de um por todos os termos do outro”) e o grau do produto é a soma dos graus, desde que os coeficientes líderes não se anulem. O conjunto dos polinômios com coeficientes reais, com as operações usuais, forma um <em>anel</em> comutativo: vale associatividade, comutatividade da soma e do produto, distributividade do produto sobre a soma, existência de elemento neutro (0 para a soma e 1 para o produto) e existência de oposto aditivo.</p>
+      </div>
+      <div class="example">
+        <span class="badge">Exemplo guiado</span>
+        <p>Soma: $(x^2+2x)+(3x^2-x+1)=4x^2+x+1$. Produto: $(x+2)(x-5)=x^2-3x-10$. Derivada termo a termo: se $P(x)=\sum a_kx^k$ então $P'(x)=\sum ka_kx^{k-1}$. Composição: $f(g(x))$ é obter $f$ substituindo $x$ por $g(x)$.</p>
+      </div>
+      <div class="video"><iframe src="https://www.youtube.com/embed/TAZkHYyio-M" title="Vídeo — Operações" allowfullscreen></iframe></div>
+      <div class="hr"></div>
+    </div>
+
+    <!-- BLOCO 5 -->
+    <div id="b5" class="section">
+      <div class="block">
+        <h3>V. Grau e coeficiente líder</h3>
+        <p>O <strong>grau</strong> de $P$ é o maior expoente com coeficiente não nulo. O coeficiente do termo de maior grau é o <strong>líder</strong>. Esses dois números determinam o comportamento para $|x|\to\infty$: se o grau é par, as “pontas” do gráfico vão na mesma direção (para cima se $a_n>0$ e para baixo se $a_n<0$); se o grau é ímpar, uma ponta sobe e a outra desce. Resultados assintóticos como $\lim_{x\to\pm\infty}a_nx^n$ controlam o crescimento de $P$ e aparecem em esboço de gráficos e estudo de sinais.</p>
+      </div>
+      <div class="example">
+        <span class="badge">Exemplo</span>
+        <p>Se $P(x)=-(x-1)^4+2$, grau $4$ e líder negativo, então $\lim_{x\to\pm\infty}P(x)=-\infty$.</p>
+      </div>
+      <div class="video"><iframe src="https://www.youtube.com/embed/TAZkHYyio-M" title="Vídeo — Grau e pontas do gráfico" allowfullscreen></iframe></div>
+      <div class="hr"></div>
+    </div>
+
+    <!-- BLOCO 6 -->
+    <div id="b6" class="section">
+      <div class="block alt">
+        <h3>VI. Divisão: método da chave e Brito-Ruffini</h3>
+        <p>Dados $P$ (dividendo) e $D$ (divisor, $D\not\equiv 0$), existem polinômios únicos $Q$ (quociente) e $R$ (resto) com $\deg R<\deg D$ tais que
+        $$P(x)=D(x)\,Q(x)+R(x).$$
+        Quando $D(x)=x-c$, o <strong>Teorema do Resto</strong> diz que $R=P(c)$. A técnica de <strong>Brito-Ruffini</strong> (ou “sintética”) acelera a divisão por binômios do tipo $x-c$: repetimos coeficientes, descemos o primeiro, multiplicamos por $c$, somamos coluna e assim por diante. O último número é o resto; os demais são os coeficientes de $Q$.</p>
+      </div>
+      <div class="example">
+        <span class="badge">Exemplo com Ruffini</span>
+        <p>Dividir $P(x)=x^4-5x^2+6$ por $x-1$. Aplicando Ruffini com $c=1$, obtemos quociente $x^3+x^2-4x-4$ e resto $10$. Isso confirma $P(x)=(x-1)(x^3+x^2-4x-4)+10$.</p>
+      </div>
+      <div class="video"><iframe src="https://www.youtube.com/embed/TAZkHYyio-M" title="Vídeo — Divisão e Ruffini" allowfullscreen></iframe></div>
+      <div class="hr"></div>
+    </div>
+
+    <!-- BLOCO 7 -->
+    <div id="b7" class="section">
+      <div class="block">
+        <h3>VII. Teorema de D’Alembert (raiz racional) e fatoração</h3>
+        <p>Para $P(x)=a_nx^n+\cdots+a_0$ com coeficientes inteiros, o <strong>Teorema de D’Alembert–Gauss</strong> (teste da raiz racional) afirma: se $p/q$ (irredutível) é raiz racional, então $p\mid a_0$ e $q\mid a_n$. Procedimento: listar candidatos $\pm$ divisores de $a_0$ sobre $\pm$ divisores de $a_n$; testar por substituição/Ruffini; ao encontrar uma raiz, fatorar $(x-\tfrac pq)$ e repetir no quociente. Em $\mathbb{R}$, fatores quadráticos irredutíveis aparecem aos pares de complexas conjugadas; em $\mathbb{C}$, todo polinômio fatora completamente (Teorema Fundamental da Álgebra).</p>
+      </div>
+      <div class="example">
+        <span class="badge">Exemplo orientado</span>
+        <p>Para $x^3-7x+6=0$, candidatos racionais: $\pm1,\pm2,\pm3$. Testando: $1$ é raiz, dividimos e obtemos $x^2+x-6=(x-2)(x+3)$. Logo as raízes reais são $-3,1,2$.</p>
+      </div>
+      <div class="video"><iframe src="https://www.youtube.com/embed/TAZkHYyio-M" title="Vídeo — D’Alembert e fatoração" allowfullscreen></iframe></div>
+      <div class="hr"></div>
+    </div>
+
+    <!-- BLOCO 8 -->
+    <div id="b8" class="section">
+      <div class="block alt">
+        <h3>VIII. Equações polinomiais: resolução por etapas</h3>
+        <p>Resolver $P(x)=0$ significa encontrar as raízes de $P$. Estratégia: (1) simplificar/fatorar expressões notáveis; (2) aplicar D’Alembert para tentar raízes racionais; (3) usar divisão para reduzir o grau; (4) resolver os fatores de grau $1$ e $2$ (fórmula de Bhaskara); (5) analisar multiplicidades e sinal para desigualdades. Sempre confirme substituindo as soluções no polinômio original e observando o comportamento do gráfico.</p>
+      </div>
+      <div class="example">
+        <span class="badge">Exemplo completo</span>
+        <p>Resolver $x^4-5x^2+4=0$. Substituição $y=x^2$ dá $y^2-5y+4=0\Rightarrow y=1$ ou $y=4$. Assim $x=\pm1,\ \pm2$. Conclusão: 4 raízes reais simples.</p>
+      </div>
+      <div class="video"><iframe src="https://www.youtube.com/embed/TAZkHYyio-M" title="Vídeo — Equações polinomiais" allowfullscreen></iframe></div>
+    </div>
+  </section>
+
+  <!-- ======================= QUIZ ======================= -->
+  <section id="paneQuiz" class="card hidden">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:10px;">
+      <h2 style="margin:0">🧪 Quiz — Funções Polinomiais (50)</h2>
+      <div id="progress" style="font-weight:700;"></div>
+    </div>
+    <p class="lead" style="margin:0 0 12px">Grau, fatoração, Vieta, sinais, multiplicidade, composição, Descartes, limites, extremos, divisão e gráficos.</p>
+
+    <div id="questions"></div>
+
+    <div class="controls" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
+      <button id="btnPrev">⬅️ Anterior</button>
+      <button id="btnNext">Próximo ➡️</button>
+      <button id="btnGrade">✅ Corrigir tudo</button>
+      <button id="btnKey">👀 Ver gabarito</button>
+      <button id="btnReset">🔁 Limpar respostas</button>
+    </div>
+
+    <div id="resultado" style="margin-top:12px;font-weight:700"></div>
+    <div id="gabarito" class="hidden" style="margin-top:12px;padding:12px;background:#f8fafc;border:1px solid var(--line);border-radius:10px">
+      <strong>Gabarito:</strong>
+      <ol id="gabaritoList" style="margin:8px 0 0 20px;"></ol>
+    </div>
+  </section>
+</div>
+
+<script>
+/* ===== Abas ===== */
+const btnTeoria = document.getElementById('btnTeoria');
+const btnQuiz   = document.getElementById('btnQuiz');
+const paneTeoria= document.getElementById('paneTeoria');
+const paneQuiz  = document.getElementById('paneQuiz');
+btnTeoria.addEventListener('click',()=>{paneTeoria.classList.remove('hidden');paneQuiz.classList.add('hidden');btnTeoria.classList.add('active');btnQuiz.classList.remove('active'); if(window.MathJax?.typesetPromise) MathJax.typesetPromise();});
+btnQuiz.addEventListener('click',()=>{paneQuiz.classList.remove('hidden');paneTeoria.classList.add('hidden');btnQuiz.classList.add('active');btnTeoria.classList.remove('active'); if(window.MathJax?.typesetPromise) MathJax.typesetPromise();});
+
+/* ===== util p/ correção ===== */
+function stripTeX(s){
+  return String(s||'')
+    .replace(/^\s+|\s+$/g,'')
+    .replace(/\$(?:.|\n)*?\$/g, m=>m.slice(1,-1))
+    .replace(/\\\((?:.|\n)*?\\\)/g, m=>m.slice(2,-2))
+    .replace(/\\\[(?:.|\n)*?\\\]/g, m=>m.slice(2,-2))
+    .replace(/\\text\{([^}]*)\}/g, '$1')
+    .replace(/\s|&nbsp;|\\,/g,'')
+    .trim();
+}
+function setOptionSpan(span, opt){
+  const s = String(opt ?? '');
+  if (/\$|\\\(|\\\[/.test(s)) span.innerHTML = s; // deixa MathJax processar
+  else span.textContent = s;                      // texto puro (evita "textlinear")
+}
+
+/* ===== Banco (50) ===== */
+const QUESTIONS = [
+  {prompt:'O grau de $f(x)=3x^4-5x^2+7$ é:',options:['1','2','3','4'],answer:'4'},
+  {prompt:`Observe o gráfico e responda: <div style="margin:.4rem 0;border:1px solid #ddd;border-radius:10px;overflow:hidden"><iframe style="width:100%;aspect-ratio:16/9;border:0" src="https://www.desmos.com/calculator/7okrtm77gg?embed" allowfullscreen></iframe></div> Quantas interseções com o eixo $x$ a curva possui?`,options:['0','1','2','3'],answer:'3'},
+  {prompt:'O coeficiente líder de $g(x)=-2x^5+\\tfrac{1}{2}x^3-9$ é:',options:['$-2$','$\\tfrac{1}{2}$','$-9$','5'],answer:'$-2$'},
+  {prompt:'Classifique $P(x)=7$ quanto ao grau/tipo:',options:['linear','quadrático','constante não nulo','polinômio nulo'],answer:'constante não nulo'},
+  {prompt:'As raízes reais de $h(x)=x^2-4x+3$ são:',options:['$x=-1,-3$','$x=1,3$','$x=2$ (dupla)','sem reais'],answer:'$x=1,3$'},
+  {prompt:'Fatore $x^3-8$:',options:['$(x-2)(x^2+2x+4)$','$(x-2)(x^2-2x+4)$','$(x+2)(x^2-2x+4)$','$(x+2)(x^2+2x+4)$'],answer:'$(x-2)(x^2+2x+4)$'},
+  {prompt:'$x^4-5x^2+4$ fatora como:',options:['$(x^2-1)(x^2-4)$','$(x^2+1)(x^2-4)$','$(x^2-2)^2$','$(x-1)(x-2)(x+1)(x+4)$'],answer:'$(x^2-1)(x^2-4)$'},
+  {prompt:'Pelo Teorema do Resto, o resto de dividir $P(x)=x^3-4x+1$ por $(x-2)$ é:',options:['$-1$','0','1','3'],answer:'1'},
+  {prompt:'Para que $k$, o fator $(x-1)$ divide $x^3+kx^2-x+1$?',options:['$k=-2$','$k=-1$','$k=0$','$k=1$'],answer:'$k=-1$'},
+  {prompt:'Resolva: $x^3-6x^2+11x-6=0$',options:['$x=1,2,3$','$x=0,2,3$','$x=1,2,4$','sem reais'],answer:'$x=1,2,3$'},
+  {prompt:'Desigualdade: $(x-1)(x+2)\\ge 0$. O conjunto solução é:',options:['$x\\le -2$ ou $x\\ge 1$','$x\\le -2$','$x\\ge 1$','todos os reais'],answer:'$x\\le -2$ ou $x\\ge 1$'},
+
+  {prompt:'Em $2x^3-3x^2+5=0$, a soma das raízes é:',options:['$\\tfrac{3}{2}$','$-\\tfrac{3}{2}$','$\\tfrac{5}{2}$','$-\\tfrac{5}{2}$'],answer:'$\\tfrac{3}{2}$'},
+  {prompt:'Para $x^3-3x+1=0$, $r_1r_2+r_1r_3+r_2r_3$ vale:',options:['-3','0','1','3'],answer:'-3'},
+  {prompt:'Solução de $x^2-5x+6<0$ é:',options:['$(-\\infty,2)\\cup(3,\\infty)$','$(2,3)$','$x\\le 2$ ou $x\\ge 3$','$\\emptyset$'],answer:'$(2,3)$'},
+  {prompt:'O quociente de $\\dfrac{x^4-1}{x^2-1}$ é:',options:['$x^2+1$','$x^2-1$','$x^2+2x+1$','$x^2-2x+1$'],answer:'$x^2+1$'},
+  {prompt:'Resto de dividir $P(x)=x^4-2x^3+3x-5$ por $(x+2)$:',options:['-21','-5','5','21'],answer:'21'},
+  {prompt:'Se $P(x)$ tem raiz $2$ de multiplicidade $3$, então:',options:['$(x-2)$ divide $P$, mas $(x-2)^2$ não','$(x-2)^3$ divide $P(x)$','$(x-2)^4$ divide $P(x)$','nada se conclui'],answer:'$(x-2)^3$ divide $P(x)$'},
+  {prompt:`Observe o gráfico e responda:
+    <div style="margin:.3rem 0; border:1px solid #ddd; border-radius:10px; overflow:hidden"><iframe style="width:100%; aspect-ratio:16/9; border:0" src="https://www.desmos.com/calculator/7okrtm77gg?embed" allowfullscreen></iframe></div>
+    Quantas interseções com o eixo $x$ a curva possui?`, options:['0','1','2','3'], answer:'3'},
+  {prompt:`Usando o mesmo gráfico:
+    <div style="margin:.3rem 0; border:1px solid #ddd; border-radius:10px; overflow:hidden"><iframe style="width:100%; aspect-ratio:16/9; border:0" src="https://www.desmos.com/calculator/7okrtm77gg?embed" allowfullscreen></iframe></div>
+    Onde $f(x)>0$?`, options:['em todos os $x$','entre as duas primeiras raízes apenas','em intervalos alternados determinados pelas raízes','nunca'], answer:'em intervalos alternados determinados pelas raízes'},
+  {prompt:'Se $P(-x)=P(x)$ para todo $x$, então $P$ é:',options:['ímpar','par','constante','nenhuma'],answer:'par'},
+  {prompt:'Dividindo $x^4-5x^2+6$ por $x^2-1$ obtemos:',options:['$x^2-4$','$x^2-4$ e resto $10$','$x^2-6$','$x^2-4 + \\tfrac{10}{x^2-1}$'],answer:'$x^2-4$ e resto $10$'},
+
+  {prompt:'Para grau par e coeficiente líder positivo, tem-se:',options:['$P(x)\\to-\\infty$ quando $x\\to\\pm\\infty$','$P(x)\\to+\\infty$ quando $x\\to\\pm\\infty$','$P(x)\\to+\\infty$ só quando $x\\to+\\infty$','indefinido'],answer:'$P(x)\\to+\\infty$ quando $x\\to\\pm\\infty$'},
+  {prompt:'Se o coeficiente líder é negativo e o grau é par, então $\\lim_{x\\to\\pm\\infty}P(x)$ é:',options:['$+\\infty$','$-\\infty$','0','não existe'],answer:'$-\\infty$'},
+  {prompt:'$\\displaystyle \\lim_{x\\to-\\infty}(2x^3-x^2)$ é:',options:['$+\\infty$','$-\\infty$','0','não existe'],answer:'$-\\infty$'},
+  {prompt:'Se $P(x)=x^2$ e $Q(x)=x-1$, então $(P\\circ Q)(x)$ é:',options:['$x^2-1$','$(x-1)^2$','$x^2-x$','x-1'],answer:'$(x-1)^2$'},
+  {prompt:'Se $P(x)=x^2-1$ e $Q(x)=x^2+1$, então $(Q\\circ P)(x)$ é:',options:['$x^2+1$','$(x^2-1)^2+1$','$x^4-1$','$(x-1)^2+1$'],answer:'$(x^2-1)^2+1$'},
+  {prompt:'Termo líder de $(x^2-3x+1)(-2x^4+5x)$:',options:['$-2x^6$','$-6x^5$','$5x^3$','$x^6$'],answer:'$-2x^6$'},
+  {prompt:'Mudanças de sinal (Descartes) em $P(x)=2x^4-3x^3+0x^2+5x-1$ para raízes positivas:',options:['0','1','2','3'],answer:'3'},
+  {prompt:'Pela Regra de Descartes, número máximo de raízes negativas de $P(x)=x^4+3x^3-2x+1$:',options:['0','1','2','3'],answer:'2'},
+  {prompt:'As raízes racionais de $x^3-7x+6=0$ são:',options:['$\\{-3,1,2\\}$','$\\{-2,-1,3\\}$','$\\{1,3,6\\}$','$\\{\\pm1,\\pm2,\\pm3\\}$'],answer:'$\\{-3,1,2\\}$'},
+  {prompt:'Solução de $x^4-5x^2+4=0$ é:',options:['$x=\\pm1,\\ \\pm2$','$x=\\pm2,\\ \\pm3$','$x=\\pm1,\\ \\pm4$','sem reais'],answer:'$x=\\pm1,\\ \\pm2$'},
+
+  {prompt:'O coeficiente de $x^3$ em $(x-2)^2(x+3)$ é:',options:['0','1','-1','3'],answer:'1'},
+  {prompt:'O grau do produto de polinômios de graus $3$ e $4$ é:',options:['6','7','12','depende dos líderes'],answer:'7'},
+  {prompt:'Para $P(x)=ax^3+bx^2+cx+d$ ser ímpar, é necessário e suficiente que:',options:['$b=d=0$','$a=c=0$','$a=b=0$','$c=d=0$'],answer:'$b=d=0$'},
+  {prompt:'Para $Q(x)=ax^4+bx^3+cx^2+dx+e$ ser par, é necessário e suficiente que:',options:['$a=c=e=0$','$b=d=0$','$a=e=0$','$b=c=d=0$'],answer:'$b=d=0$'},
+  {prompt:'Quociente de $\\dfrac{x^3-1}{x-1}$ é:',options:['$x^2+x+1$','$x^2-x+1$','$x^2+1$','$x^2+2x+1$'],answer:'$x^2+x+1$'},
+  {prompt:'Quociente de $\\dfrac{x^5-1}{x-1}$ é:',options:['$x^4+1$','$x^4+x^3+x^2+x+1$','$x^4+x^2+1$','$x^4+2x^3+x^2+2x+1$'],answer:'$x^4+x^3+x^2+x+1$'},
+  {prompt:'Um polinômio de grau $7$ possui quantos coeficientes?',options:['6','7','8','9'],answer:'8'},
+  {prompt:'Para que $k$, $x=2$ é raiz de $x^3+kx^2-x-2$?',options:['$k=-1$','$k=0$','$k=1$','$k=2$'],answer:'$k=-1$'},
+  {prompt:'Se $P$ é ímpar, então $P(0)$ vale:',options:['0','1','-1','indefinido'],answer:'0'},
+
+  {prompt:'Se $P$ é par, então $P\'(0)$ vale:',options:['0','1','-1','não se pode afirmar'],answer:'0'},
+  {prompt:'Condição correta para raiz dupla em $x=a$:',options:['$P(a)=0$ e $P\'(a)=0$','$P(a)=0$ e $P\'(a)\\ne0$','$P(a)\\ne0$ e $P\'(a)=0$','nenhuma'],answer:'$P(a)=0$ e $P\'(a)=0$'},
+  {prompt:'Se $P(x)=(x-a)^2Q(x)$, então em $x=a$ o gráfico:',options:['corta o eixo $x$ e muda de sinal','toca o eixo $x$ e não muda de sinal','não toca o eixo $x$','sempre tem máximo'],answer:'toca o eixo $x$ e não muda de sinal'},
+  {prompt:'Máximo número de raízes reais distintas de um polinômio de grau $5$:',options:['2','3','4','5'],answer:'5'},
+  {prompt:'Resto de $x^5-3x^3+2$ por $(x-1)$:',options:['-2','-1','0','1'],answer:'0'},
+  {prompt:'Resto de $x^4+2x^2-5$ por $(x+1)$:',options:['-2','-1','0','1'],answer:'-2'},
+  {prompt:'Valor de $P(1)$ se $P(x)=x^4-4x^3+6x^2-4x+1$:',options:['0','1','2','-1'],answer:'1'},
+  {prompt:'Se $P(x)=x(x-1)(x+2)$, o número de zeros reais (com multiplicidade) é:',options:['1','2','3','4'],answer:'3'},
+  {prompt:'Se $P(x)=-(x-1)^4+2$, então $\\lim_{x\\to\\pm\\infty}P(x)$ é:',options:['$+\\infty$','$-\\infty$','0','2'],answer:'$-\\infty$'},
+
+  {prompt:'Para $x^3-5x^2+4=0$, uma raiz inteira é:',options:['$-2$','$-1$','1','4'],answer:'1'},
+  {prompt:'Se $P(x)=x^4+ax^2+1$ tem $x=1$ como zero, então $a$ é:',options:['-2','-1','0','2'],answer:'-2'},
+  {prompt:'Se $P(x)=x^2+bx+1$ tem raiz dupla, então $b$ é:',options:['-2','-1','0','2'],answer:'-2'},
+  {prompt:'Coeficiente de $x^2$ em $(x+1)^4$ é:',options:['4','6','12','24'],answer:'6'},
+  {prompt:'Se $P(x)=x^4-5x^2+6$, então $P(-x)$ é:',options:['$x^4+5x^2+6$','$x^4-5x^2+6$','$-x^4+5x^2-6$','$-x^4-5x^2-6$'],answer:'$x^4-5x^2+6$'},
+  {prompt:'Quociente de $\\dfrac{x^4-1}{x-1}$ é:',options:['$x^3+x^2+x+1$','$x^3-x^2+x-1$','$x^3+1$','$x^3+x^2+1$'],answer:'$x^3+x^2+x+1$'},
+  {prompt:'Se $P$ é de grau $n$ com líder $a_n>0$ e $n$ ímpar, então $\\lim_{x\\to-\\infty}P(x)$ é:',options:['$+\\infty$','$-\\infty$','0','não existe'],answer:'$-\\infty$'},
+  {prompt:'Número máximo de extremos (máx/min) de um polinômio de grau $4$:',options:['1','2','3','4'],answer:'3'}
+];
+
+/* ===== Estado + Render ===== */
+const PAGE_SIZE=10;
+let currentPage=0;
+const answers={};
+let graded=false;
+let showKey=false;
+const correctness={};
+
+function render(){
+  const start=currentPage*PAGE_SIZE, end=Math.min(start+PAGE_SIZE,QUESTIONS.length);
+  const totalPages=Math.ceil(QUESTIONS.length/PAGE_SIZE);
+  const container=document.getElementById('questions');
+  document.getElementById('progress').textContent=`Página ${currentPage+1}/${totalPages} • Questões ${start+1}–${end} de ${QUESTIONS.length}`;
+  document.getElementById('btnPrev').disabled=currentPage===0;
+  document.getElementById('btnNext').disabled=currentPage>=totalPages-1;
+
+  container.innerHTML='';
+  for(let i=start;i<end;i++){
+    const q=QUESTIONS[i];
+    const wrap=document.createElement('div'); wrap.className='q';
+    const head=document.createElement('div'); head.innerHTML=`<strong>(${i+1})</strong> `;
+    const promptSpan=document.createElement('span'); promptSpan.innerHTML=q.prompt; head.appendChild(promptSpan); wrap.appendChild(head);
+
+    q.options.forEach((opt,j)=>{
+      const row=document.createElement('label'); row.className='opt';
+      const radio=document.createElement('input'); radio.type='radio'; radio.name=`q${i}`; radio.value=opt;
+      if(answers[i]===opt) radio.checked=true; radio.onchange=()=>answers[i]=opt;
+      const letter=document.createElement('span'); letter.className='letter'; letter.textContent=`(${String.fromCharCode(97+j)})`;
+      const text=document.createElement('span'); setOptionSpan(text,opt);
+
+      row.appendChild(radio); row.appendChild(letter); row.appendChild(text); wrap.appendChild(row);
+    });
+
+    if(graded && (i in correctness)){
+      wrap.style.borderColor = correctness[i] ? 'var(--ok)' : 'var(--err)';
+      wrap.style.boxShadow = correctness[i] ? '0 0 0 3px rgba(16,185,129,.15)' : '0 0 0 3px rgba(239,68,68,.15)';
+    }
+    container.appendChild(wrap);
+  }
+  if(window.MathJax?.typesetPromise){ MathJax.typesetPromise([container]).catch(()=>{}); }
+  if(showKey) fillGabarito();
+}
+function nextPage(){ const total=Math.ceil(QUESTIONS.length/PAGE_SIZE); if(currentPage<total-1){currentPage++; render(); window.scrollTo({top:0,behavior:'smooth'})}}
+function prevPage(){ if(currentPage>0){currentPage--; render(); window.scrollTo({top:0,behavior:'smooth'})}}
+function corrigirTudo(){
+  graded=true; let ac=0;
+  for(let i=0;i<QUESTIONS.length;i++){
+    const ua=stripTeX(answers[i]||''), ka=stripTeX(QUESTIONS[i].answer||''); const ok=(ua && ua===ka);
+    correctness[i]=ok; if(ok) ac++;
+  }
+  const pct=Math.round(100*ac/QUESTIONS.length);
+  document.getElementById('resultado').textContent=`Você acertou ${ac} de ${QUESTIONS.length} (${pct}%).`;
+  render();
+}
+function toggleGabarito(){ showKey=!showKey; document.getElementById('gabarito').classList.toggle('hidden',!showKey); fillGabarito(); }
+function fillGabarito(){
+  const ol=document.getElementById('gabaritoList'); if(!showKey){ ol.innerHTML=''; return; } ol.innerHTML='';
+  QUESTIONS.forEach((q,i)=>{
+    const li=document.createElement('li');
+    const idx=q.options.findIndex(o=>stripTeX(o)===stripTeX(q.answer));
+    const letter=idx>=0?`(${String.fromCharCode(97+idx)}) `:'';
+    const span=document.createElement('span'); setOptionSpan(span, q.answer||'');
+    li.appendChild(document.createTextNode(letter)); li.appendChild(span); ol.appendChild(li);
+  });
+  if(window.MathJax?.typesetPromise){ MathJax.typesetPromise([ol]).catch(()=>{}); }
+}
+function resetarTudo(){ for(const k in answers) delete answers[k]; for(const k in correctness) delete correctness[k]; graded=false; showKey=false; document.getElementById('resultado').textContent=''; document.getElementById('gabarito').classList.add('hidden'); render(); }
+document.getElementById('btnPrev').onclick=prevPage;
+document.getElementById('btnNext').onclick=nextPage;
+document.getElementById('btnGrade').onclick=corrigirTudo;
+document.getElementById('btnKey').onclick=toggleGabarito;
+document.getElementById('btnReset').onclick=resetarTudo;
+document.addEventListener('DOMContentLoaded',render);
+</script>
+</body>
+</html>
